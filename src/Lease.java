@@ -1,11 +1,26 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 public class Lease {
 
     private Customer customer;
     private Car car;
+    private int leaseID;
+    private int customerID;
+    private int carID;
+    private String leaseAddress;
+    private int leaseZip;
+    private String actualDriverLicenseNumber;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private int milesBought;
+    private int currentMileage;
 
-    public Lease(Customer customer, Car car, int leaseID, int customerID, String leaseAddress, int carID, int leaseZip, String actualDriverLicenseNumber, LocalDateTime startDate, LocalDateTime endDate, int milesBought, int currentMileage) {
+    public Lease(Customer customer, Car car, int leaseID, int customerID, String leaseAddress, int carID, int leaseZip, String actualDriverLicenseNumber, LocalDateTime startDate, LocalDateTime endDate, int milesBought, int currentMileage) throws SQLException {
         this.customer = customer;
         this.car = car;
         this.leaseID = leaseID;
@@ -19,6 +34,51 @@ public class Lease {
         this.milesBought = milesBought;
         this.currentMileage = currentMileage;
     }
+
+
+    public static void createLease(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Lease ID: ");
+        int id = scanner.nextInt(); scanner.nextLine();
+        System.out.print("Customer ID: ");
+        int customerID = scanner.nextInt(); scanner.nextLine();
+        System.out.print("Car ID: ");
+        int carID = scanner.nextInt(); scanner.nextLine();
+        System.out.print("Lease Address: ");
+        String address = scanner.nextLine();
+        System.out.print("Lease Zip: ");
+        int zip = scanner.nextInt(); scanner.nextLine();
+        System.out.print("Actual Driver License Number: ");
+        String license = scanner.nextLine();
+        System.out.print("Start Date (YYYY-MM-DDTHH:MM): ");
+        LocalDateTime start = LocalDateTime.parse(scanner.nextLine());
+        System.out.print("End Date (YYYY-MM-DDTHH:MM): ");
+        LocalDateTime end = LocalDateTime.parse(scanner.nextLine());
+        System.out.print("Miles Bought: ");
+        int milesBought = scanner.nextInt(); scanner.nextLine();
+        System.out.print("Current Mileage: ");
+        int currentMileage = scanner.nextInt(); scanner.nextLine();
+
+        String sql = "INSERT INTO Lease VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.setInt(2, customerID);
+            stmt.setInt(3, carID);
+            stmt.setString(4, address);
+            stmt.setInt(5, zip);
+            stmt.setString(6, license);
+            stmt.setTimestamp(7, Timestamp.valueOf(start));
+            stmt.setTimestamp(8, Timestamp.valueOf(end));
+            stmt.setInt(9, milesBought);
+            stmt.setInt(10, currentMileage);
+            stmt.executeUpdate();
+            System.out.println("Lease created successfully.");
+        }
+    }
+
+
+
+
+
 
     @Override
     public String toString() {
@@ -53,17 +113,6 @@ public class Lease {
     public void setCar(Car car) {
         this.car = car;
     }
-
-    private int leaseID;
-    private int customerID;
-    private int carID;
-    private String leaseAddress;
-    private int leaseZip;
-    private String actualDriverLicenseNumber;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private int milesBought;
-    private int currentMileage;
 
     public int getCarID() {
         return carID;

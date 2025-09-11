@@ -4,44 +4,41 @@ import java.util.Scanner;
 
 public class Interface {
 
+    public void Menu() {
 
+        DataBaseManager dbManager = new DataBaseManager();
 
-    DataBaseManager dbManager = new DataBaseManager();
+        try (
+                Connection conn = dbManager.getConnection();
+                Scanner scanner = new Scanner(System.in)) {
 
-    public Interface() throws SQLException {
-    }
+            System.out.println("Choose an option:");
+            System.out.println("1. Create Customer");
+            System.out.println("2. Create Car");
+            System.out.println("3. Create Lease");
 
+            int choice = scanner.nextInt();
+            scanner.nextLine();
 
-    public void Menu(){
+            switch (choice) {
+                case 1 -> createCustomer(conn, scanner);
+                case 2 -> createCar(conn, scanner);
+                case 3 -> Lease.createLease(conn, scanner);
+                default -> System.out.println("Invalid choice.");
+            }
 
-    try ( Connection conn = dbManager.getConnection();
-    Scanner scanner = new Scanner(System.in)) {
-
-        System.out.println("Welcome to the Lease Management Console");
-        System.out.println("Choose an option:");
-        System.out.println("1. Create Customer");
-        System.out.println("2. Create Car");
-        System.out.println("3. Create Lease");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // consume newline
-
-        switch (choice) {
-            case 1 -> createCustomer(conn, scanner);
-            case 2 -> createCar(conn, scanner);
-            case 3 -> createLease(conn, scanner);
-            default -> System.out.println("Invalid choice.");
+        } catch (
+                SQLException e) {
+            System.out.println("Database connection failed: " + e.getMessage());
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
 }
 
 
 
 
-}
+
+
 
 
 

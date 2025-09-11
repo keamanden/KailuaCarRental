@@ -1,10 +1,21 @@
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Customer {
     private int customerID;
     private String name;
     private String address;
     private int zip;
+    private String city;
+    private String mobilePhone;
+    private String email;
+    private String driverLicenseNumber;
+    private LocalDate driverSinceDate;
+
 
     public Customer(int customerID, String name, String address, int zip, String city, String mobilePhone, String email, String driverLicenseNumber, LocalDate driverSinceDate) {
         this.customerID = customerID;
@@ -18,11 +29,60 @@ public class Customer {
         this.driverSinceDate = driverSinceDate;
     }
 
-    private String city;
-    private String mobilePhone;
-    private String email;
-    private String driverLicenseNumber;
-    private LocalDate driverSinceDate;
+
+    public static void createCustomer(Connection conn, Scanner scanner) {
+
+        try (scanner) {
+            System.out.print("Customer ID: ");
+            int customerID = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Address: ");
+            String address = scanner.nextLine();
+
+            System.out.print("Zip Code: ");
+            int zip = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("City: ");
+            String city = scanner.nextLine();
+
+            System.out.print("Mobile Phone: ");
+            String mobilePhone = scanner.nextLine();
+
+            System.out.print("Email: ");
+            String email = scanner.nextLine();
+
+            System.out.print("Driver License Number: ");
+            String licenseNumber = scanner.nextLine();
+
+            System.out.print("Driver Since Date (YYYY-MM-DD): ");
+            LocalDate driverSinceDate = LocalDate.parse(scanner.nextLine());
+
+            String sql = "INSERT INTO Customer (CustomerID, Name, Address, Zip, City, MobilePhone, Email, DriverLicenseNumber, DriverSinceDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, customerID);
+                stmt.setString(2, name);
+                stmt.setString(3, address);
+                stmt.setInt(4, zip);
+                stmt.setString(5, city);
+                stmt.setString(6, mobilePhone);
+                stmt.setString(7, email);
+                stmt.setString(8, licenseNumber);
+                stmt.setDate(9, Date.valueOf(driverSinceDate));
+                stmt.executeUpdate();
+                System.out.println("Customer created successfully.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Input error: " + e.getMessage());
+        }
+
+    }
+
 
     public int getCustomerID() {
         return customerID;
