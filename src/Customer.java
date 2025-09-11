@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -79,6 +80,7 @@ public class Customer {
             System.out.println("Database error: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Input error: " + e.getMessage());
+
         }
 
     }

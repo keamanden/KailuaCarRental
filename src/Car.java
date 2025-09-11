@@ -1,4 +1,9 @@
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Car {
     private int carID;
@@ -20,7 +25,53 @@ public class Car {
     private LocalDate firstRegistration;
     private int mileage;
 
-    @Override
+
+    public static void createCar(Connection conn, Scanner scanner) {
+        try (scanner) {
+            System.out.print("Car ID: ");
+            int carID = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Brand: ");
+            String brand = scanner.nextLine();
+
+            System.out.print("Model: ");
+            String model = scanner.nextLine();
+
+            System.out.print("Fuel Type: ");
+            String fuelType = scanner.nextLine();
+
+            System.out.print("Registration: ");
+            String registration = scanner.nextLine();
+
+            System.out.print("First Registration Date (YYYY-MM-DD): ");
+            LocalDate firstRegistration = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Mileage: ");
+            int mileage = Integer.parseInt(scanner.nextLine());
+
+            String sql = "INSERT INTO Cars (CarID, Brand, Model, FuelType, Registration, FirstRegistration, Mileage) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, carID);
+                stmt.setString(2, brand);
+                stmt.setString(3, model);
+                stmt.setString(4, fuelType);
+                stmt.setString(5, registration);
+                stmt.setDate(6, Date.valueOf(firstRegistration));
+                stmt.setInt(7, mileage);
+                stmt.executeUpdate();
+                System.out.println("Car created successfully.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Input error: " + e.getMessage());
+        }
+}
+
+
+        @Override
     public String toString() {
         return "Car{" +
                 "carID=" + carID +
