@@ -26,7 +26,7 @@ public class Car {
     private int mileage;
 
 
-    public static void createCar(Connection conn, Scanner scanner) {
+    public static Car createCar(Scanner scanner) {
         try (scanner) {
             System.out.print("Car ID: ");
             int carID = Integer.parseInt(scanner.nextLine());
@@ -49,27 +49,32 @@ public class Car {
             System.out.print("Mileage: ");
             int mileage = Integer.parseInt(scanner.nextLine());
 
-            String sql = "INSERT INTO Cars (CarID, Brand, Model, FuelType, Registration, FirstRegistration, Mileage) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            return new Car(carID, brand, model, fuelType, registration, firstRegistration, mileage);
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, carID);
-                stmt.setString(2, brand);
-                stmt.setString(3, model);
-                stmt.setString(4, fuelType);
-                stmt.setString(5, registration);
-                stmt.setDate(6, Date.valueOf(firstRegistration));
-                stmt.setInt(7, mileage);
-                stmt.executeUpdate();
-                System.out.println("Car created successfully.");
-            }
+        } catch (Exception e) {
+            System.out.println("Error creating car: " + e.getMessage());
+            return null;
+        }
+    }
+
+
+    public void saveToDatabase(Connection conn) {
+        String sql = "INSERT INTO Cars (CarID, Brand, Model, FuelType, Registration, FirstRegistration, Mileage) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, this.carID);
+            stmt.setString(2, this.brand);
+            stmt.setString(3, this.model);
+            stmt.setString(4, this.fuelType);
+            stmt.setString(5, this.registration);
+            stmt.setDate(6, Date.valueOf(this.firstRegistration));
+            stmt.setInt(7, this.mileage);
+            stmt.executeUpdate();
+            System.out.println("Car saved to database successfully.");
         } catch (SQLException e) {
             System.out.println("Database error: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Input error: " + e.getMessage());
         }
-}
-
+    }
 
         @Override
     public String toString() {

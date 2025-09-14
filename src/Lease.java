@@ -1,3 +1,4 @@
+import java.nio.channels.ScatteringByteChannel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,48 +37,77 @@ public class Lease {
     }
 
 
-    public static void createLease(Connection conn, Scanner scanner) throws SQLException {
-        System.out.print("Lease ID: ");
-        int id = scanner.nextInt(); scanner.nextLine();
-        System.out.print("Customer ID: ");
-        int customerID = scanner.nextInt(); scanner.nextLine();
-        System.out.print("Car ID: ");
-        int carID = scanner.nextInt(); scanner.nextLine();
-        System.out.print("Lease Address: ");
-        String address = scanner.nextLine();
-        System.out.print("Lease Zip: ");
-        int zip = scanner.nextInt(); scanner.nextLine();
-        System.out.print("Actual Driver License Number: ");
-        String license = scanner.nextLine();
-        System.out.print("Start Date (YYYY-MM-DDTHH:MM): ");
-        LocalDateTime start = LocalDateTime.parse(scanner.nextLine());
-        System.out.print("End Date (YYYY-MM-DDTHH:MM): ");
-        LocalDateTime end = LocalDateTime.parse(scanner.nextLine());
-        System.out.print("Miles Bought: ");
-        int milesBought = scanner.nextInt(); scanner.nextLine();
-        System.out.print("Current Mileage: ");
-        int currentMileage = scanner.nextInt(); scanner.nextLine();
+    public static Lease createLease(Scanner scanner) {
 
-        String sql = "INSERT INTO Lease VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.setInt(2, customerID);
-            stmt.setInt(3, carID);
-            stmt.setString(4, address);
-            stmt.setInt(5, zip);
-            stmt.setString(6, license);
-            stmt.setTimestamp(7, Timestamp.valueOf(start));
-            stmt.setTimestamp(8, Timestamp.valueOf(end));
-            stmt.setInt(9, milesBought);
-            stmt.setInt(10, currentMileage);
-            stmt.executeUpdate();
-            System.out.println("Lease created successfully.");
+        try (scanner) {
+            System.out.print("Lease ID: ");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Customer ID: ");
+            int customerID = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Car ID: ");
+            int carID = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Lease Address: ");
+            String address = scanner.nextLine();
+            System.out.print("Lease Zip: ");
+            int zip = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Actual Driver License Number: ");
+            String license = scanner.nextLine();
+            System.out.print("Start Date (YYYY-MM-DDTHH:MM): ");
+            LocalDateTime start = LocalDateTime.parse(scanner.nextLine());
+            System.out.print("End Date (YYYY-MM-DDTHH:MM): ");
+            LocalDateTime end = LocalDateTime.parse(scanner.nextLine());
+            System.out.print("Miles Bought: ");
+            int milesBought = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Current Mileage: ");
+            int currentMileage = scanner.nextInt();
+            scanner.nextLine();
+
+            return new Lease(
+                    null,
+                    null,
+                    id,
+                    customerID,
+                    address,
+                    carID,
+                    zip,
+                    license,
+                    start,
+                    end,
+                    milesBought,
+                    currentMileage
+            );
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
+        public void saveToDatabase(Connection conn) throws SQLException {
+            String sql = "INSERT INTO Lease (leaseID, customerID, carID, leaseAddress, leaseZip, actualDriverLicenseNumber, startDate, endDate, milesBought, currentMileage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, leaseID);
+                pstmt.setInt(2, customerID);
+                pstmt.setInt(3, carID);
+                pstmt.setString(4, leaseAddress);
+                pstmt.setInt(5, leaseZip);
+                pstmt.setString(6, actualDriverLicenseNumber);
+                pstmt.setTimestamp(7, Timestamp.valueOf(startDate));
+                pstmt.setTimestamp(8, Timestamp.valueOf(endDate));
+                pstmt.setInt(9, milesBought);
+                pstmt.setInt(10, currentMileage);
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("Error saving lease to database: " + e.getMessage());
+                throw e;
+            }
 
-
-
+        }
 
 
     @Override

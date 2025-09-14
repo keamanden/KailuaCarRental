@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -28,12 +27,14 @@ public class Customer {
         this.email = email;
         this.driverLicenseNumber = driverLicenseNumber;
         this.driverSinceDate = driverSinceDate;
+
     }
 
 
-    public static void createCustomer(Connection conn, Scanner scanner) {
+    public static Customer createCustomer(Scanner scanner) {
 
-        try (scanner) {
+
+        try ( scanner) {
             System.out.print("Customer ID: ");
             int customerID = Integer.parseInt(scanner.nextLine());
 
@@ -61,115 +62,121 @@ public class Customer {
             System.out.print("Driver Since Date (YYYY-MM-DD): ");
             LocalDate driverSinceDate = LocalDate.parse(scanner.nextLine());
 
-            String sql = "INSERT INTO Customer (CustomerID, Name, Address, Zip, City, MobilePhone, Email, DriverLicenseNumber, DriverSinceDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            return new Customer(customerID, name, address, zip, city, mobilePhone, email, licenseNumber, driverSinceDate);
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, customerID);
-                stmt.setString(2, name);
-                stmt.setString(3, address);
-                stmt.setInt(4, zip);
-                stmt.setString(5, city);
-                stmt.setString(6, mobilePhone);
-                stmt.setString(7, email);
-                stmt.setString(8, licenseNumber);
-                stmt.setDate(9, Date.valueOf(driverSinceDate));
-                stmt.executeUpdate();
-                System.out.println("Customer created successfully.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Input error: " + e.getMessage());
-
+            System.out.println("Error creating customer: " + e.getMessage());
+            return null;
         }
 
+
     }
 
+        public void saveToDatabase (Connection conn){
+            String sql = "INSERT INTO Customer (CustomerID, Name, Address, Zip, City, MobilePhone, Email, DriverLicenseNumber, DriverSinceDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try  ( conn;
+                  PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, this.customerID);
+                stmt.setString(2, this.name);
+                stmt.setString(3, this.address);
+                stmt.setInt(4, this.zip);
+                stmt.setString(5, this.city);
+                stmt.setString(6, this.mobilePhone);
+                stmt.setString(7, this.email);
+                stmt.setString(8, this.driverLicenseNumber);
+                stmt.setDate(9, Date.valueOf(this.driverSinceDate));
+                stmt.executeUpdate();
+                System.out.println("Customer saved to database successfully.");
+            } catch (SQLException e) {
+                System.out.println("Database error: " + e.getMessage());
+            }
+        }
 
-    public int getCustomerID() {
-        return customerID;
+        public int getCustomerID () {
+            return customerID;
+        }
+
+        public void setCustomerID ( int customerID){
+            this.customerID = customerID;
+        }
+
+        public String getName () {
+            return name;
+        }
+
+        public void setName (String name){
+            this.name = name;
+        }
+
+        public String getAddress () {
+            return address;
+        }
+
+        public void setAddress (String address){
+            this.address = address;
+        }
+
+        public int getZip () {
+            return zip;
+        }
+
+        public void setZip ( int zip){
+            this.zip = zip;
+        }
+
+        public String getCity () {
+            return city;
+        }
+
+        public void setCity (String city){
+            this.city = city;
+        }
+
+        public String getMobilePhone () {
+            return mobilePhone;
+        }
+
+        public void setMobilePhone (String mobilePhone){
+            this.mobilePhone = mobilePhone;
+        }
+
+        public String getEmail () {
+            return email;
+        }
+
+        public void setEmail (String email){
+            this.email = email;
+        }
+
+        public String getDriverLicenseNumber () {
+            return driverLicenseNumber;
+        }
+
+        public void setDriverLicenseNumber (String driverLicenseNumber){
+            this.driverLicenseNumber = driverLicenseNumber;
+        }
+
+        public LocalDate getDriverSinceDate () {
+            return driverSinceDate;
+        }
+
+        public void setDriverSinceDate (LocalDate driverSinceDate){
+            this.driverSinceDate = driverSinceDate;
+        }
+
+        @Override
+        public String toString () {
+            return "Customer{" +
+                    "customerID=" + customerID +
+                    ", name='" + name + '\'' +
+                    ", address='" + address + '\'' +
+                    ", zip=" + zip +
+                    ", city='" + city + '\'' +
+                    ", mobilePhone='" + mobilePhone + '\'' +
+                    ", email='" + email + '\'' +
+                    ", driverLicenseNumber='" + driverLicenseNumber + '\'' +
+                    ", driverSinceDate=" + driverSinceDate +
+                    '}';
+        }
     }
 
-    public void setCustomerID(int customerID) {
-        this.customerID = customerID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getZip() {
-        return zip;
-    }
-
-    public void setZip(int zip) {
-        this.zip = zip;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getMobilePhone() {
-        return mobilePhone;
-    }
-
-    public void setMobilePhone(String mobilePhone) {
-        this.mobilePhone = mobilePhone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getDriverLicenseNumber() {
-        return driverLicenseNumber;
-    }
-
-    public void setDriverLicenseNumber(String driverLicenseNumber) {
-        this.driverLicenseNumber = driverLicenseNumber;
-    }
-
-    public LocalDate getDriverSinceDate() {
-        return driverSinceDate;
-    }
-
-    public void setDriverSinceDate(LocalDate driverSinceDate) {
-        this.driverSinceDate = driverSinceDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "customerID=" + customerID +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", zip=" + zip +
-                ", city='" + city + '\'' +
-                ", mobilePhone='" + mobilePhone + '\'' +
-                ", email='" + email + '\'' +
-                ", driverLicenseNumber='" + driverLicenseNumber + '\'' +
-                ", driverSinceDate=" + driverSinceDate +
-                '}';
-    }
-}

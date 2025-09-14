@@ -21,9 +21,23 @@ public class Interface {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> Customer.createCustomer(conn, scanner);
-                case 2 -> Car.createCar(conn, scanner);
-                case 3 -> Lease.createLease(conn, scanner);
+
+                case 1 -> {
+                    Customer customer = Customer.createCustomer(scanner);
+                    customer.saveToDatabase(conn);
+                }
+                case 2 -> {
+
+                    Car car = Car.createCar( scanner);
+                    car.saveToDatabase(conn);
+                }
+                case 3 -> {
+
+                    Lease lease = Lease.createLease(scanner);
+                    lease.saveToDatabase(conn);
+                }
+
+
                 default -> System.out.println("Invalid choice.");
             }
 
