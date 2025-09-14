@@ -92,6 +92,31 @@ public class Customer {
             }
         }
 
+        public static void displayCustomers () {
+            String sql = "SELECT * FROM Customer";
+            try {
+                Connection conn = DataBaseManager.getConnection();
+
+                  PreparedStatement stmt = conn.prepareStatement(sql);
+                  var rs = stmt.executeQuery();{
+                    while (rs.next()) {
+                        System.out.println("Customer ID: " + rs.getInt("CustomerID"));
+                        System.out.println("Name: " + rs.getString("Name"));
+                        System.out.println("Address: " + rs.getString("Address"));
+                        System.out.println("Zip: " + rs.getInt("Zip"));
+                        System.out.println("City: " + rs.getString("City"));
+                        System.out.println("Mobile Phone: " + rs.getString("MobilePhone"));
+                        System.out.println("Email: " + rs.getString("Email"));
+                        System.out.println("Driver License Number: " + rs.getString("DriverLicenseNumber"));
+                        System.out.println("Driver Since Date: " + rs.getDate("DriverSinceDate"));
+                        System.out.println("---------------------------");
+                    }
+                }
+            } catch (SQLException e) {
+                System.out.println("Database error: " + e.getMessage());
+            }
+        }
+
         public int getCustomerID () {
             return customerID;
         }

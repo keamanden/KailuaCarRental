@@ -4,13 +4,17 @@ import java.util.Scanner;
 
 public class Interface {
 
-    public void Menu() {
+
+    public Interface(Connection conn) {
+    }
+
+    public void Menu() throws SQLException {
 
         DataBaseManager dbManager = new DataBaseManager();
 
-        try (
-                Connection conn = dbManager.getConnection();
-                Scanner scanner = new Scanner(System.in)) {
+
+        Connection conn = dbManager.getConnection();
+        Scanner scanner = new Scanner(System.in);{
 
             System.out.println("Choose an option:");
             System.out.println("1. Create Customer");
@@ -28,7 +32,7 @@ public class Interface {
                 }
                 case 2 -> {
 
-                    Car car = Car.createCar( scanner);
+                    Car car = Car.createCar(scanner);
                     car.saveToDatabase(conn);
                 }
                 case 3 -> {
@@ -41,14 +45,11 @@ public class Interface {
                 default -> System.out.println("Invalid choice.");
             }
 
-        } catch (
-                SQLException e) {
-            System.out.println("Database connection failed: " + e.getMessage());
+
         }
     }
+
 }
-
-
 
 
 

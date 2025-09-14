@@ -76,6 +76,31 @@ public class Car {
         }
     }
 
+
+    public static void displayCars(Connection conn) {
+
+
+        String sql = "SELECT * FROM Cars";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                int carID = rs.getInt("CarID");
+                String brand = rs.getString("Brand");
+                String model = rs.getString("Model");
+                String fuelType = rs.getString("FuelType");
+                String registration = rs.getString("Registration");
+                LocalDate firstRegistration = rs.getDate("FirstRegistration").toLocalDate();
+                int mileage = rs.getInt("Mileage");
+
+                Car car = new Car(carID, brand, model, fuelType, registration, firstRegistration, mileage);
+                System.out.println(car);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving cars: " + e.getMessage());
+        }
+
+    }
+
         @Override
     public String toString() {
         return "Car{" +

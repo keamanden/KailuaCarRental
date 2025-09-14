@@ -1,8 +1,7 @@
+import com.mysql.cj.protocol.Resultset;
+
 import java.nio.channels.ScatteringByteChannel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
@@ -37,16 +36,27 @@ public class Lease {
     }
 
 
-    public static Lease createLease(Scanner scanner) {
+    public static Lease createLease(Scanner scanner) throws SQLException {
 
-        try (scanner) {
-            System.out.print("Lease ID: ");
-            int id = scanner.nextInt();
+
+        try {
+            Connection conn = DataBaseManager.getConnection();
+            System.out.print("Select a customer");
+            Customer.displayCustomers();
+            scanner.hasNextLine();
+            int choice = scanner.nextInt();
+            String sql = "SELECT * FROM Customer WHERE customerID = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, choice);
+            ResultSet rs = pstmt.executeQuery();
+            int customerID = 0;
+            if (rs.next()) {
+                customerID = rs.getInt("customerID");
+
+            }
             scanner.nextLine();
-            System.out.print("Customer ID: ");
-            int customerID = scanner.nextInt();
-            scanner.nextLine();
-            System.out.print("Car ID: ");
+            System.out.print("Select a car");
+            Car.displayCars(conn);
             int carID = scanner.nextInt();
             scanner.nextLine();
             System.out.print("Lease Address: ");
@@ -70,7 +80,7 @@ public class Lease {
             return new Lease(
                     null,
                     null,
-                    id,
+                    0,
                     customerID,
                     address,
                     carID,
@@ -86,28 +96,29 @@ public class Lease {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-        public void saveToDatabase(Connection conn) throws SQLException {
-            String sql = "INSERT INTO Lease (leaseID, customerID, carID, leaseAddress, leaseZip, actualDriverLicenseNumber, startDate, endDate, milesBought, currentMileage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, leaseID);
-                pstmt.setInt(2, customerID);
-                pstmt.setInt(3, carID);
-                pstmt.setString(4, leaseAddress);
-                pstmt.setInt(5, leaseZip);
-                pstmt.setString(6, actualDriverLicenseNumber);
-                pstmt.setTimestamp(7, Timestamp.valueOf(startDate));
-                pstmt.setTimestamp(8, Timestamp.valueOf(endDate));
-                pstmt.setInt(9, milesBought);
-                pstmt.setInt(10, currentMileage);
-                pstmt.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("Error saving lease to database: " + e.getMessage());
-                throw e;
-            }
+    public void saveToDatabase(Connection conn) throws SQLException {
+        String sql = "INSERT INTO Lease ( customerID, carID, leaseAddress, leaseZip, actualDriverLicenseNumber, startDate, endDate, milesBought, currentMileage) VALUES ( null, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            pstmt.setInt(2, customerID);
+            pstmt.setInt(3, carID);
+            pstmt.setString(4, leaseAddress);
+            pstmt.setInt(5, leaseZip);
+            pstmt.setString(6, actualDriverLicenseNumber);
+            pstmt.setTimestamp(7, Timestamp.valueOf(startDate));
+            pstmt.setTimestamp(8, Timestamp.valueOf(endDate));
+            pstmt.setInt(9, milesBought);
+            pstmt.setInt(10, currentMileage);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error saving lease to database: " + e.getMessage());
+            throw e;
         }
+
+    }
 
 
     @Override
