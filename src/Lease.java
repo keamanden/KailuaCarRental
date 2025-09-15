@@ -1,6 +1,3 @@
-import com.mysql.cj.protocol.Resultset;
-
-import java.nio.channels.ScatteringByteChannel;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -12,22 +9,22 @@ public class Lease {
     private int leaseID;
     private int customerID;
     private int carID;
-    private String leaseAddress;
-    private int leaseZip;
+    private String Address;
+    private int Zip;
     private String actualDriverLicenseNumber;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int milesBought;
     private int currentMileage;
 
-    public Lease(Customer customer, Car car, int leaseID, int customerID, String leaseAddress, int carID, int leaseZip, String actualDriverLicenseNumber, LocalDateTime startDate, LocalDateTime endDate, int milesBought, int currentMileage) throws SQLException {
+    public Lease(Customer customer, Car car, int leaseID, int customerID, String Address, int carID, int leaseZip, String actualDriverLicenseNumber, LocalDateTime startDate, LocalDateTime endDate, int milesBought, int currentMileage) throws SQLException {
         this.customer = customer;
         this.car = car;
         this.leaseID = leaseID;
         this.customerID = customerID;
-        this.leaseAddress = leaseAddress;
+        this.Address = Address;
         this.carID = carID;
-        this.leaseZip = leaseZip;
+        this.Zip = leaseZip;
         this.actualDriverLicenseNumber = actualDriverLicenseNumber;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -100,18 +97,18 @@ public class Lease {
     }
 
     public void saveToDatabase(Connection conn) throws SQLException {
-        String sql = "INSERT INTO Lease ( customerID, carID, leaseAddress, leaseZip, actualDriverLicenseNumber, startDate, endDate, milesBought, currentMileage) VALUES ( null, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Lease ( customerID, carID, Address, Zip, actualDriverLicenseNumber, startDate, endDate, milesBought, currentMileage) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(2, customerID);
-            pstmt.setInt(3, carID);
-            pstmt.setString(4, leaseAddress);
-            pstmt.setInt(5, leaseZip);
-            pstmt.setString(6, actualDriverLicenseNumber);
-            pstmt.setTimestamp(7, Timestamp.valueOf(startDate));
-            pstmt.setTimestamp(8, Timestamp.valueOf(endDate));
-            pstmt.setInt(9, milesBought);
-            pstmt.setInt(10, currentMileage);
+            pstmt.setInt(1, customerID);
+            pstmt.setInt(2, carID);
+            pstmt.setString(3, Address);
+            pstmt.setInt(4, Zip);
+            pstmt.setString(5, actualDriverLicenseNumber);
+            pstmt.setTimestamp(6, Timestamp.valueOf(startDate));
+            pstmt.setTimestamp(7, Timestamp.valueOf(endDate));
+            pstmt.setInt(8, milesBought);
+            pstmt.setInt(9, currentMileage);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error saving lease to database: " + e.getMessage());
@@ -129,8 +126,8 @@ public class Lease {
                 ", leaseID=" + leaseID +
                 ", customerID=" + customerID +
                 ", carID=" + carID +
-                ", leaseAddress='" + leaseAddress + '\'' +
-                ", leaseZip=" + leaseZip +
+                ", leaseAddress='" + Address + '\'' +
+                ", leaseZip=" + Zip +
                 ", actualDriverLicenseNumber='" + actualDriverLicenseNumber + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
@@ -179,20 +176,20 @@ public class Lease {
         this.customerID = customerID;
     }
 
-    public String getLeaseAddress() {
-        return leaseAddress;
+    public String getAddress() {
+        return Address;
     }
 
-    public void setLeaseAddress(String leaseAddress) {
-        this.leaseAddress = leaseAddress;
+    public void setAddress(String address) {
+        this.Address = address;
     }
 
-    public int getLeaseZip() {
-        return leaseZip;
+    public int getZip() {
+        return Zip;
     }
 
-    public void setLeaseZip(int leaseZip) {
-        this.leaseZip = leaseZip;
+    public void setZip(int zip) {
+        this.Zip = zip;
     }
 
     public String getActualDriverLicenseNumber() {
