@@ -96,6 +96,60 @@ public class Lease {
 
     }
 
+    public static void displayLease(Connection conn, Scanner scanner) {
+
+        String sql = "SELECT * FROM Lease " +
+                "JOIN Customer ON Lease.CustomerID = Customer.CustomerID " +
+                "JOIN Cars ON Lease.CarID = Cars.CarID " +
+                "WHERE Lease.CustomerID = ?";
+        try {
+            System.out.print("Enter Customer ID to view leases: ");
+            int customerID = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, customerID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String leaseInfo = rs.getInt("LeaseID") + ", " +
+                        rs.getInt("CustomerID") + ", " +
+                        rs.getInt("CarID") + ", " +
+                        rs.getString("Address") + ", " +
+                        rs.getInt("Zip") + ", " +
+                        rs.getString("ActualDriverLicenseNumber") + ", " +
+                        rs.getTimestamp("StartDate").toLocalDateTime() + ", " +
+                        rs.getTimestamp("EndDate").toLocalDateTime() + ", " +
+                        rs.getInt("MilesBought") + ", " +
+                        rs.getInt("CurrentMileage");
+
+                String customerInfo = rs.getString("Name") + ", " +
+                        rs.getString("Address") + ", " +
+                        rs.getInt("Zip") + ", " +
+                        rs.getString("City") + ", " +
+                        rs.getString("MobilePhone") + ", " +
+                        rs.getString("Email") + ", " +
+                        rs.getString("DriverLicenseNumber") + ", " +
+                        rs.getDate("DriverSinceDate");
+
+                String carInfo = rs.getString("Brand") + ", " +
+                        rs.getString("Model") + ", " +
+                        rs.getString("FuelType") + ", " +
+                        rs.getString("Registration") + ", " +
+                        rs.getDate("FirstRegistration") + ", " +
+                        rs.getInt("Mileage");
+
+                System.out.println("Lease Info: " + leaseInfo);
+                System.out.println("Customer Info: " + customerInfo);
+                System.out.println("Car Info: " + carInfo);
+                System.out.println("---------------------------");
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public void saveToDatabase(Connection conn) throws SQLException {
         String sql = "INSERT INTO Lease ( customerID, carID, Address, Zip, actualDriverLicenseNumber, startDate, endDate, milesBought, currentMileage) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

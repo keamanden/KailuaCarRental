@@ -9,6 +9,10 @@ public class Car {
     private int carID;
     private String brand;
     private String model;
+    private String fuelType;
+    private String registration;
+    private LocalDate firstRegistration;
+    private int mileage;
 
     public Car(int carID, String brand, String model, String fuelType, String registration, LocalDate firstRegistration, int mileage) {
         this.carID = carID;
@@ -20,16 +24,10 @@ public class Car {
         this.mileage = mileage;
     }
 
-    private String fuelType;
-    private String registration;
-    private LocalDate firstRegistration;
-    private int mileage;
 
 
     public static Car createCar(Scanner scanner) {
         try (scanner) {
-            System.out.print("Car ID: ");
-            int carID = Integer.parseInt(scanner.nextLine());
 
             System.out.print("Brand: ");
             String brand = scanner.nextLine();
@@ -49,7 +47,7 @@ public class Car {
             System.out.print("Mileage: ");
             int mileage = Integer.parseInt(scanner.nextLine());
 
-            return new Car(carID, brand, model, fuelType, registration, firstRegistration, mileage);
+            return new Car(0, brand, model, fuelType, registration, firstRegistration, mileage);
 
         } catch (Exception e) {
             System.out.println("Error creating car: " + e.getMessage());
@@ -59,16 +57,16 @@ public class Car {
 
 
     public void saveToDatabase(Connection conn) {
-        String sql = "INSERT INTO Cars (CarID, Brand, Model, FuelType, Registration, FirstRegistration, Mileage) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Cars (Brand, Model, FuelType, Registration, FirstRegistration, Mileage) " +
+                "VALUES ( ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, this.carID);
-            stmt.setString(2, this.brand);
-            stmt.setString(3, this.model);
-            stmt.setString(4, this.fuelType);
-            stmt.setString(5, this.registration);
-            stmt.setDate(6, Date.valueOf(this.firstRegistration));
-            stmt.setInt(7, this.mileage);
+
+            stmt.setString(1, this.brand);
+            stmt.setString(2, this.model);
+            stmt.setString(3, this.fuelType);
+            stmt.setString(4, this.registration);
+            stmt.setDate(5, Date.valueOf(this.firstRegistration));
+            stmt.setInt(6, this.mileage);
             stmt.executeUpdate();
             System.out.println("Car saved to database successfully.");
         } catch (SQLException e) {

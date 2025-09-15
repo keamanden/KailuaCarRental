@@ -9,8 +9,8 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
 
-        DataBaseManager dbManager = new DataBaseManager();
-        Connection conn = dbManager.getConnection(); // Open connection
+
+        Connection conn = DataBaseManager.getConnection(); // Open connection
 
         Interface anInterface = new Interface(conn); // Pass connection to Interface
         anInterface.Menu();

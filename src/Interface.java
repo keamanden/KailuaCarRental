@@ -20,6 +20,7 @@ public class Interface {
             System.out.println("1. Create Customer");
             System.out.println("2. Create Car");
             System.out.println("3. Create Lease");
+            System.out.println("4. Display Leases for Customer");
 
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -39,6 +40,10 @@ public class Interface {
 
                     Lease lease = Lease.createLease(scanner);
                     lease.saveToDatabase(conn);
+                }
+
+                case 4 ->  {
+                    Lease.displayLease(conn, scanner);
                 }
 
 
