@@ -11,8 +11,6 @@ public class Interface {
     public void Menu() throws SQLException {
 
         DataBaseManager dbManager = new DataBaseManager();
-
-
         Connection conn = dbManager.getConnection();
         Scanner scanner = new Scanner(System.in);{
 
