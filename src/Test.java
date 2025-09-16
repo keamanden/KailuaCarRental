@@ -2,7 +2,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+
+import static java.util.Arrays.stream;
 
 public class Test {
 
@@ -13,7 +17,21 @@ public class Test {
 
         Connection conn = new DataBaseManager().getConnection();
 
-        viewCars(new Scanner(System.in));
+
+        List<Car> cars = Car.allCarsToList(conn);
+
+        cars.stream().sorted(Comparator.comparing(Car::getMileage)).forEach(System.out::println);
+
+        for (Car car : cars ){
+
+            System.out.println(car);
+
+            System.out.println("-------------------");
+
+
+        }
+
+        //viewCars(new Scanner(System.in));
     }
 
     public static void viewCars(Scanner sc) throws SQLException {
